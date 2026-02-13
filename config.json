@@ -1,0 +1,24 @@
+{
+  "networks": {
+    "ethereum": {
+      "rpc_url": "https://mainnet.infura.io/v3/YOUR_API_KEY",
+      "wss_url": "wss://mainnet.infura.io/ws/v3/YOUR_API_KEY",
+      "chain_id": 1
+    }
+  },
+  "contracts": {
+    "uniswap_v2_router": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+    "sushi_router": "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F",
+    "mev_executor_contract": "0xYourDeployedExecutorContractAddress"
+  },
+  "strategy_params": {
+    "min_profit_threshold_eth": 0.05,
+    "max_gas_price_gwei": 150,
+    "slippage_tolerance_bps": 50,
+    "scan_interval_ms": 100
+  },
+  "auth": {
+    "wallet_address": "0xYourWalletAddress",
+    "private_key": "ENVIRONMENT_VARIABLE_KEY"
+  }
+}
