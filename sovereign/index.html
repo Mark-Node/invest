@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sovereign 主權節點基礎設施 — 台灣延遲優勢</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sovereign: {
+                            gold: '#d4a843',
+                            'gold-light': '#e8c96a',
+                            'gold-dark': '#b8922e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Inter"', '"Noto Sans TC"', 'system-ui', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif; }
+
+        /* Gold glow for CTA */
+        .gold-glow {
+            box-shadow: 0 0 20px rgba(212, 168, 67, 0.3), 0 0 60px rgba(212, 168, 67, 0.1);
+            border: 1px solid rgba(212, 168, 67, 0.5);
+        }
+        .gold-glow:hover {
+            box-shadow: 0 0 30px rgba(212, 168, 67, 0.5), 0 0 80px rgba(212, 168, 67, 0.2);
+            border-color: rgba(212, 168, 67, 0.8);
+        }
+
+        /* Stat counter animation */
+        .stat-value { font-variant-numeric: tabular-nums; }
+
+        /* Terminal styling */
+        .terminal-feed {
+            background: #0c0f14;
+            border: 1px solid #1e293b;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+        .terminal-feed::-webkit-scrollbar { width: 6px; }
+        .terminal-feed::-webkit-scrollbar-track { background: #0c0f14; }
+        .terminal-feed::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+        /* Pulse for online indicator */
+        @keyframes pulse-online {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .pulse-online { animation: pulse-online 2s ease-in-out infinite; }
+
+        /* Subtle grid background */
+        .bg-grid {
+            background-image:
+                linear-gradient(rgba(51, 65, 85, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(51, 65, 85, 0.15) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Comment card hover */
+        .comment-card {
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .comment-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        /* SVG diagram animations */
+        @keyframes dash-flow {
+            to { stroke-dashoffset: -20; }
+        }
+        .flow-line {
+            stroke-dasharray: 8 6;
+            animation: dash-flow 1s linear infinite;
+        }
+
+        /* Countdown digits */
+        .countdown-digit {
+            min-width: 2.5rem;
+        }
+
+        /* Toast animation */
+        #toast-container > div {
+            animation: toast-in 0.4s ease-out;
+        }
+        @keyframes toast-in {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200 antialiased">
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION A: HEADER                          -->
+    <!-- ═══════════════════════════════════════════ -->
+    <header class="relative overflow-hidden bg-grid">
+        <div class="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-950/90 to-slate-950"></div>
+        <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28 text-center">
+            <!-- Logo -->
+            <div class="flex justify-center mb-8">
+                <img src="assets/sovereign/icon_sovereign.png" alt="Sovereign Logo" class="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl shadow-lg shadow-blue-500/10">
+            </div>
+
+            <!-- Title -->
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight tracking-tight">
+                <span class="text-sovereign-gold">Sovereign</span>
+                <span class="text-white"> 基礎設施</span>
+                <br class="hidden sm:block">
+                <span class="text-slate-100 text-xl sm:text-2xl lg:text-3xl font-semibold">利用台灣延遲優勢，直接吸取全球鯨魚資金</span>
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="mt-6 text-sm sm:text-base text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                台灣位於亞太海底光纜核心交匯點，結合本地高效能運算晶片——物理延遲優勢，讓主權節點運營商直接存取鏈上流動性池，提取 MEV 收益。
+            </p>
+
+            <!-- Online Status -->
+            <div class="mt-8 inline-flex items-center gap-2 bg-slate-800/60 border border-slate-700/50 rounded-full px-5 py-2 text-sm">
+                <span class="relative flex h-2.5 w-2.5">
+                    <span class="pulse-online absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <span class="text-emerald-400 font-medium">ONLINE</span>
+                <span class="text-slate-500">—</span>
+                <span class="text-slate-400">台北 / 新竹節點運行中</span>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION B: THE TECH BLOCK                  -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="bg-slate-900 border-y border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                <!-- Text -->
+                <div>
+                    <p class="text-xs font-semibold tracking-widest text-blue-400 uppercase mb-3">Node Operator Role</p>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white mb-6">成為主權節點運營商</h2>
+                    <div class="space-y-4 text-slate-400 text-sm sm:text-base leading-relaxed">
+                        <p>當你加入 Sovereign，你不是在「投資」一個基金，也不是在「跟單」某個交易員。<strong class="text-slate-200">你是在部署一個虛擬節點</strong>，背後連接位於台北與新竹的實體伺服器硬體。</p>
+                        <p>你的節點持續掃描鏈上的 <span class="text-blue-400 font-medium">mempool（交易記憶池）</span>，自動偵測並提取 MEV 機會——包括三明治交易、套利、清算等鏈上原生收益。</p>
+                        <p>每個節點運行獨立的策略引擎，不互相干擾，確保每位運營商的收益獨立且可驗證。技術架構採用晶圓廠等級低延遲網路協定，結合自研 MEV 搜尋演算法。</p>
+                    </div>
+                </div>
+
+                <!-- Server Image -->
+                <div class="relative">
+                    <div class="absolute -inset-4 bg-blue-500/5 rounded-2xl blur-2xl"></div>
+                    <img src="assets/sovereign/banner_server.png" alt="Sovereign Server Infrastructure" class="relative rounded-xl border border-slate-700/50 shadow-2xl shadow-blue-500/5 w-full">
+                </div>
+            </div>
+
+            <!-- SVG Flow Diagram -->
+            <div class="mt-16 sm:mt-20">
+                <p class="text-xs font-semibold tracking-widest text-slate-500 uppercase mb-6 text-center">MEV 提取流程</p>
+                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-6 sm:p-8 overflow-x-auto">
+                    <svg viewBox="0 0 900 140" class="w-full min-w-[600px] h-auto" xmlns="http://www.w3.org/2000/svg">
+                        <!-- User Node -->
+                        <rect x="10" y="35" width="120" height="70" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+                        <text x="70" y="65" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Inter, sans-serif">運營商</text>
+                        <text x="70" y="83" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="600" font-family="Inter, sans-serif">User</text>
+
+                        <!-- Arrow 1 -->
+                        <line x1="135" y1="70" x2="210" y2="70" stroke="#3b82f6" stroke-width="2" class="flow-line"/>
+                        <polygon points="210,65 220,70 210,75" fill="#3b82f6"/>
+
+                        <!-- Sovereign Node -->
+                        <rect x="225" y="25" width="160" height="90" rx="8" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
+                        <text x="305" y="55" text-anchor="middle" fill="#93c5fd" font-size="11" font-family="Inter, sans-serif">Sovereign Node</text>
+                        <text x="305" y="75" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="700" font-family="Inter, sans-serif">台北節點</text>
+                        <text x="305" y="97" text-anchor="middle" fill="#60a5fa" font-size="10" font-family="Inter, sans-serif">Latency: 0.31s</text>
+
+                        <!-- Arrow 2 -->
+                        <line x1="390" y1="70" x2="460" y2="70" stroke="#3b82f6" stroke-width="2" class="flow-line"/>
+                        <polygon points="460,65 470,70 460,75" fill="#3b82f6"/>
+
+                        <!-- Mempool -->
+                        <rect x="475" y="35" width="120" height="70" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+                        <text x="535" y="65" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Inter, sans-serif">掃描</text>
+                        <text x="535" y="83" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="600" font-family="Inter, sans-serif">Mempool</text>
+
+                        <!-- Arrow 3 -->
+                        <line x1="600" y1="70" x2="670" y2="70" stroke="#d4a843" stroke-width="2" class="flow-line"/>
+                        <polygon points="670,65 680,70 670,75" fill="#d4a843"/>
+
+                        <!-- MEV Extraction -->
+                        <rect x="685" y="35" width="130" height="70" rx="8" fill="#2d2415" stroke="#d4a843" stroke-width="1.5"/>
+                        <text x="750" y="60" text-anchor="middle" fill="#d4a843" font-size="11" font-family="Inter, sans-serif">MEV 提取</text>
+                        <text x="750" y="80" text-anchor="middle" fill="#e8c96a" font-size="15" font-weight="700" font-family="Inter, sans-serif">→ Profit</text>
+                        <text x="750" y="97" text-anchor="middle" fill="#d4a843" font-size="10" font-family="Inter, sans-serif">收益歸運營商</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION C: STATS DASHBOARD                 -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="bg-slate-950">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+            <p class="text-xs font-semibold tracking-widest text-slate-500 uppercase mb-8 text-center">即時基礎設施數據</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                <!-- Active Nodes -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-6 sm:p-8 text-center">
+                    <div class="text-slate-500 text-xs font-semibold tracking-wider uppercase mb-2">Active Nodes</div>
+                    <div class="stat-value text-3xl sm:text-4xl font-bold text-white" data-target="847" data-duration="2000">0</div>
+                    <div class="text-slate-500 text-xs mt-2">全球運行節點</div>
+                </div>
+                <!-- Total MEV -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-6 sm:p-8 text-center">
+                    <div class="text-slate-500 text-xs font-semibold tracking-wider uppercase mb-2">Total MEV Captured</div>
+                    <div class="stat-value text-3xl sm:text-4xl font-bold text-sovereign-gold" data-target="12847.3" data-duration="2500" data-decimals="1" data-suffix=" ETH">0</div>
+                    <div class="text-slate-500 text-xs mt-2">累計提取收益</div>
+                </div>
+                <!-- Latency -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-6 sm:p-8 text-center">
+                    <div class="text-slate-500 text-xs font-semibold tracking-wider uppercase mb-2">Average Latency</div>
+                    <div class="stat-value text-3xl sm:text-4xl font-bold text-blue-400" data-target="0.31" data-duration="1500" data-decimals="2" data-suffix="s">0</div>
+                    <div class="text-slate-500 text-xs mt-2">平均延遲（秒）</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION D: LIVE FEED                       -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="bg-slate-900 border-y border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <p class="text-xs font-semibold tracking-widest text-slate-500 uppercase mb-1">Live Node Feed</p>
+                    <h2 class="text-xl sm:text-2xl font-bold text-white">節點即時捕獲日誌</h2>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-emerald-400">
+                    <span class="relative flex h-2 w-2">
+                        <span class="pulse-online absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    LIVE
+                </div>
+            </div>
+            <div id="node-feed" class="terminal-feed rounded-xl p-4 sm:p-6 h-64 sm:h-72 overflow-y-auto text-xs sm:text-sm text-slate-500">
+                <div class="text-slate-600 italic">正在連接至 Sovereign 節點網路...</div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION E: DEPOSIT LOGIC                   -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="bg-slate-950">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+            <div class="text-center mb-12">
+                <p class="text-xs font-semibold tracking-widest text-sovereign-gold uppercase mb-3">質押與節點部署</p>
+                <h2 class="text-2xl sm:text-3xl font-bold text-white">$400 質押金 = 節點部署擔保</h2>
+                <p class="mt-4 text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">你的質押金確保節點在伺服器端有對應的運算資源被分配和保留。這是基礎設施投資，不是交易倉位。</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+                <!-- Deposit Details -->
+                <div class="order-2 lg:order-1">
+                    <div class="flex items-start gap-4 mb-8">
+                        <img src="assets/sovereign/icon_deposit.png" alt="Deposit Icon" class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg flex-shrink-0 mt-1">
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-2">節點部署擔保金</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">把它理解為你租用了一小塊台灣最強大的運算基礎設施。你的質押金用來保障節點運行所需的頻寬、算力與資料中心電力。</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3 bg-slate-900/60 border border-slate-800 rounded-lg p-4">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-white">$400 USDT</div>
+                                <div class="text-xs text-slate-500">初始節點質押金</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 bg-slate-900/60 border border-slate-800 rounded-lg p-4">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-white">12–24 小時</div>
+                                <div class="text-xs text-slate-500">節點部署後首筆收益時間</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 bg-slate-900/60 border border-slate-800 rounded-lg p-4">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-white">穩定幣直入錢包</div>
+                                <div class="text-xs text-slate-500">收益自動結算，無需手動操作</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hardware Image -->
+                <div class="order-1 lg:order-2 relative">
+                    <div class="absolute -inset-4 bg-sovereign-gold/5 rounded-2xl blur-2xl"></div>
+                    <img src="assets/sovereign/banner_hardware.png" alt="Node Hardware" class="relative rounded-xl border border-slate-700/50 shadow-2xl w-full">
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION F: COMMENTS                        -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="bg-slate-900 border-y border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+            <div class="text-center mb-10">
+                <p class="text-xs font-semibold tracking-widest text-slate-500 uppercase mb-3">Community Feedback</p>
+                <h2 class="text-2xl sm:text-3xl font-bold text-white">運營商社群回饋</h2>
+                <p class="mt-3 text-slate-500 text-sm">來自 PTT / Dcard 加密貨幣版的真實討論</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Comment 1 -->
+                <div class="comment-card bg-slate-950/60 border border-slate-800 rounded-lg p-5">
+                    <p class="text-sm text-slate-300 leading-relaxed mb-3">「已加入 Sovereign 運營商 2 天，節點收益已到賬，技術支持很強。」</p>
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center text-xs text-blue-400 font-bold">K</div>
+                        <span class="text-xs text-slate-500">運營商_Kevin</span>
+                        <span class="ml-auto text-xs text-slate-700">2 天前</span>
+                    </div>
+                </div>
+
+                <!-- Comment 2 -->
+                <div class="comment-card bg-slate-950/60 border border-slate-800 rounded-lg p-5">
+                    <p class="text-sm text-slate-300 leading-relaxed mb-3">「終於不是那種垃圾機器人了，這是真正的基礎設施。」</p>
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-xs text-emerald-400 font-bold">D</div>
+                        <span class="text-xs text-slate-500">DeFi研究員</span>
+                        <span class="ml-auto text-xs text-slate-700">3 天前</span>
+                    </div>
+                </div>
+
+                <!-- Comment 3 -->
+                <div class="comment-card bg-slate-950/60 border border-slate-800 rounded-lg p-5">
+                    <p class="text-sm text-slate-300 leading-relaxed mb-3">「台北節點的延遲真的低，Sovereign 果然專業。」</p>
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-xs text-purple-400 font-bold">工</div>
+                        <span class="text-xs text-slate-500">新竹工程師</span>
+                        <span class="ml-auto text-xs text-slate-700">1 天前</span>
+                    </div>
+                </div>
+
+                <!-- Comment 4 -->
+                <div class="comment-card bg-slate-950/60 border border-slate-800 rounded-lg p-5">
+                    <p class="text-sm text-slate-300 leading-relaxed mb-3">「半信半疑加入的，結果第一天就有收益通知...有點嚇到。」</p>
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-amber-500/20 flex items-center justify-center text-xs text-amber-400 font-bold">A</div>
+                        <span class="text-xs text-slate-500">小資族Andy</span>
+                        <span class="ml-auto text-xs text-slate-700">1 天前</span>
+                    </div>
+                </div>
+
+                <!-- Comment 5 -->
+                <div class="comment-card bg-slate-950/60 border border-slate-800 rounded-lg p-5">
+                    <p class="text-sm text-slate-300 leading-relaxed mb-3">「身為 IT 人，我看了他們的技術文件，架構是真的。」</p>
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center text-xs text-cyan-400 font-bold">資</div>
+                        <span class="text-xs text-slate-500">資工系畢業生</span>
+                        <span class="ml-auto text-xs text-slate-700">4 天前</span>
+                    </div>
+                </div>
+
+                <!-- Comment 6 -->
+                <div class="comment-card bg-slate-950/60 border border-slate-800 rounded-lg p-5">
+                    <p class="text-sm text-slate-300 leading-relaxed mb-3">「朋友推薦的，目前觀察中，但介面確實很專業。」</p>
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-rose-500/20 flex items-center justify-center text-xs text-rose-400 font-bold">翔</div>
+                        <span class="text-xs text-slate-500">台中阿翔</span>
+                        <span class="ml-auto text-xs text-slate-700">5 天前</span>
+                    </div>
+                </div>
+
+                <!-- Comment 7 (full width on sm) -->
+                <div class="comment-card bg-slate-950/60 border border-slate-800 rounded-lg p-5 sm:col-span-2 sm:max-w-md sm:mx-auto sm:w-full">
+                    <p class="text-sm text-slate-300 leading-relaxed mb-3">「第三天了，節點穩定運行中，收益比預期好。推。」</p>
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-xs text-indigo-400 font-bold">柏</div>
+                        <span class="text-xs text-slate-500">柏翰_BH</span>
+                        <span class="ml-auto text-xs text-slate-700">12 小時前</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION G: CTA                             -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="bg-slate-950">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-center">
+            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">部署你的主權節點</h2>
+            <p class="text-slate-400 text-sm sm:text-base mb-10 max-w-lg mx-auto">拿回屬於台灣的技術主權。物理延遲優勢只存在於我們這個區域——而名額有限。</p>
+
+            <!-- CTA Button -->
+            <a href="#" id="cta-sovereign" class="gold-glow inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold text-base sm:text-lg px-10 sm:px-14 py-4 sm:py-5 rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]">
+                成為 Sovereign 節點運營商
+            </a>
+
+            <!-- Countdown Timer -->
+            <div class="mt-10">
+                <p class="text-xs text-slate-500 uppercase tracking-widest mb-4">下一批硬體擴充倒計時</p>
+                <div id="countdown" class="flex items-center justify-center gap-2 sm:gap-3 text-white">
+                    <div class="bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 sm:px-4 sm:py-3">
+                        <div class="countdown-digit text-xl sm:text-2xl font-bold font-mono" id="cd-hours">00</div>
+                        <div class="text-[10px] text-slate-600 mt-1">HOURS</div>
+                    </div>
+                    <span class="text-slate-600 text-xl font-light">:</span>
+                    <div class="bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 sm:px-4 sm:py-3">
+                        <div class="countdown-digit text-xl sm:text-2xl font-bold font-mono" id="cd-minutes">00</div>
+                        <div class="text-[10px] text-slate-600 mt-1">MINS</div>
+                    </div>
+                    <span class="text-slate-600 text-xl font-light">:</span>
+                    <div class="bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 sm:px-4 sm:py-3">
+                        <div class="countdown-digit text-xl sm:text-2xl font-bold font-mono" id="cd-seconds">00</div>
+                        <div class="text-[10px] text-slate-600 mt-1">SECS</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Remaining Slots -->
+            <div class="mt-8 inline-flex items-center gap-2 bg-slate-900/80 border border-sovereign-gold/20 rounded-full px-5 py-2.5">
+                <svg class="w-4 h-4 text-sovereign-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/></svg>
+                <span class="text-sm text-sovereign-gold font-medium">剩餘節點名額: <strong class="text-sovereign-gold-light">23</strong></span>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- FOOTER                                     -->
+    <!-- ═══════════════════════════════════════════ -->
+    <footer class="bg-slate-900 border-t border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+            <p class="text-xs text-slate-600">&copy; 2025 Sovereign Infrastructure Ltd. All rights reserved.</p>
+            <p class="text-xs text-slate-700 mt-1">台北 · 新竹 — 主權節點基礎設施</p>
+        </div>
+    </footer>
+
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- TOAST CONTAINER                            -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-3 max-w-sm"></div>
+
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- INLINE SCRIPTS (counters + countdown)      -->
+    <!-- ═══════════════════════════════════════════ -->
+    <script>
+        // --- Stat Counter Animation ---
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-value[data-target]');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const el = entry.target;
+                        const target = parseFloat(el.dataset.target);
+                        const duration = parseInt(el.dataset.duration) || 2000;
+                        const decimals = parseInt(el.dataset.decimals) || 0;
+                        const suffix = el.dataset.suffix || '';
+                        const start = performance.now();
+
+                        function update(now) {
+                            const elapsed = now - start;
+                            const progress = Math.min(elapsed / duration, 1);
+                            // ease-out cubic
+                            const eased = 1 - Math.pow(1 - progress, 3);
+                            const current = eased * target;
+
+                            if (decimals > 0) {
+                                el.textContent = current.toLocaleString('en-US', {
+                                    minimumFractionDigits: decimals,
+                                    maximumFractionDigits: decimals
+                                }) + suffix;
+                            } else {
+                                el.textContent = Math.floor(current).toLocaleString('en-US') + suffix;
+                            }
+
+                            if (progress < 1) {
+                                requestAnimationFrame(update);
+                            }
+                        }
+                        requestAnimationFrame(update);
+                        observer.unobserve(el);
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            counters.forEach(c => observer.observe(c));
+        }
+        animateCounters();
+
+        // --- Countdown Timer (48h from first visit) ---
+        (function() {
+            const COUNTDOWN_KEY = 'sovereign_cd_end';
+            let endTime = localStorage.getItem(COUNTDOWN_KEY);
+            if (!endTime) {
+                // 48 hours from now
+                endTime = Date.now() + 48 * 60 * 60 * 1000;
+                localStorage.setItem(COUNTDOWN_KEY, endTime);
+            }
+            endTime = parseInt(endTime);
+
+            function tick() {
+                const diff = Math.max(0, endTime - Date.now());
+                const h = Math.floor(diff / 3600000);
+                const m = Math.floor((diff % 3600000) / 60000);
+                const s = Math.floor((diff % 60000) / 1000);
+
+                document.getElementById('cd-hours').textContent = String(h).padStart(2, '0');
+                document.getElementById('cd-minutes').textContent = String(m).padStart(2, '0');
+                document.getElementById('cd-seconds').textContent = String(s).padStart(2, '0');
+
+                if (diff > 0) requestAnimationFrame(tick);
+            }
+            tick();
+        })();
+    </script>
+
+    <!-- External scripts -->
+    <script src="js/sovereign-feed.js"></script>
+    <script src="js/sovereign-social.js"></script>
+    <script src="js/sovereign-tracking.js"></script>
+
+</body>
+</html>
