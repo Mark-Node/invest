@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  var OFFER_URL = 'https://offer-url.com';
+  var OFFER_URL = 'https://t.me/BroMaark';
 
   document.addEventListener('DOMContentLoaded', function () {
     var params = new URLSearchParams(window.location.search);
