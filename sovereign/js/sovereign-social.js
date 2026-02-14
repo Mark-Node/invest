@@ -55,7 +55,7 @@
 
     if (type < 0.4) {
       var hex = randHex(4);
-      var eth = (Math.random() * 2.4 + 0.1).toFixed(2);
+      var eth = (Math.random() * 2.4 + 0.1).toFixed(4);
       return '運營商 0x' + hex + ' 的節點剛剛提取了 ' + eth + ' ETH';
     } else if (type < 0.7) {
       var node = randInt(100, 999);
@@ -77,33 +77,23 @@
     var toast = document.createElement('div');
     toast.textContent = generateMessage();
 
-    // Toast styling
-    toast.style.background = 'rgba(15, 15, 25, 0.95)';
-    toast.style.color = '#e2e8f0';
-    toast.style.padding = '14px 18px';
-    toast.style.borderRadius = '6px';
-    toast.style.borderLeft = '4px solid #3b82f6';
-    toast.style.fontSize = '14px';
-    toast.style.lineHeight = '1.5';
-    toast.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-    toast.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.4)';
-    toast.style.transform = 'translateX(120%)';
-    toast.style.transition = 'transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease';
-    toast.style.opacity = '1';
+    // Toast styling via Tailwind classes (no inline styles to avoid clashes)
+    toast.className = 'bg-slate-950/95 text-slate-200 px-4 py-3.5 rounded-md border-l-4 border-blue-500 text-sm leading-relaxed font-sans shadow-xl shadow-black/40 translate-x-[120%] transition-all duration-400 ease-out opacity-100';
 
     container.appendChild(toast);
 
     // Slide in from right
     requestAnimationFrame(function () {
       requestAnimationFrame(function () {
-        toast.style.transform = 'translateX(0)';
+        toast.classList.remove('translate-x-[120%]');
+        toast.classList.add('translate-x-0');
       });
     });
 
     // Auto-dismiss after 4 seconds with fade-out
     setTimeout(function () {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateX(120%)';
+      toast.classList.add('opacity-0', 'translate-x-[120%]');
+      toast.classList.remove('translate-x-0');
       setTimeout(function () {
         if (toast.parentNode) {
           toast.parentNode.removeChild(toast);

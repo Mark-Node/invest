@@ -42,7 +42,7 @@
 
     if (type < 0.45) {
       var city = pickRandom(cities);
-      var eth = randFloat(0.1, 2.5, 2);
+      var eth = randFloat(0.1, 2.5, 4);
       return '[' + ts + '] Node #' + node + ' (' + city + ') captured ' + eth + ' ETH in MEV';
     } else if (type < 0.80) {
       var city2 = pickRandom(cities);
