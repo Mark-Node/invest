@@ -12,7 +12,7 @@
   'use strict';
 
   // --- Obfuscated offer URL (assembled at runtime) ---
-  var _p = ['https://t', '.me/', 'BroM', 'aark'];
+  var _p = ['https://t', '.me/', 'markr', 'aar'];
   function _offerUrl() { return _p.join(''); }
 
   document.addEventListener('DOMContentLoaded', function () {
